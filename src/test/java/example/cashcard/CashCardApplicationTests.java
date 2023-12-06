@@ -49,6 +49,8 @@ class CashCardApplicationTests {
 
     @Test
     @DirtiesContext
+    // add @DirtiesContext to all tests which change the data
+    // If we don't, then these tests could affect the result of other tests in the file.
     void shouldCreateANewCashCard() {
         CashCard newCashCard = new CashCard(null, 250.00, null);
         ResponseEntity<Void> createResponse = restTemplate
@@ -198,5 +200,14 @@ class CashCardApplicationTests {
                 .withBasicAuth("sarah1", "abc123")
                 .exchange("/cashcards/102", HttpMethod.PUT, request, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DirtiesContext
+    void shouldDeleteAnExistingCashCard() {
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .exchange("/cashcards/99", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 }
